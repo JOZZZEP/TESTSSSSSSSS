@@ -1,0 +1,48 @@
+
+.toolbarBut {
+  display: none;
+}
+
+.name-site {
+  display: none;
+}
+
+.icon_site{
+  display: none;
+}
+
+@media screen and (min-width: 992px) {
+  .toolbarBut {
+    display: inline-block;
+  }
+  .name-site {
+    display: inline-block;
+  }
+  .icon_site{
+    display: inline-block;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .name-site {
+    display: inline-block;
+  }
+  .icon_site{
+    display: inline-block;
+  }
+}
+
+@media screen and (min-width: 375px) {
+  .icon_site{
+    display: inline-block;
+  }
+}
+
+.text_name_site:hover{
+  transform: scale(1.03);
+}
+
+.orderInfo:hover{
+  cursor: pointer;
+  transform: scale(1.03);
+}

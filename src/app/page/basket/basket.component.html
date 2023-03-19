@@ -1,0 +1,113 @@
+<div class="container" style="padding-top: 100px;">
+  <div class="ps-2" style="display: flex; justify-content: space-between;">
+    <button type="button" class="btn btn-light btn-lg themeButton"style="color: white;" routerLink="/">หน้าเมนูอาหาร</button>
+    <div class="themeColor titlePage" style="border-radius: 40px; padding: 0 20px;">
+      <span style="color: white; font-size: 30px;">รายการในตะกร้า</span>
+    </div>
+  </div>
+  <div class="row rowBasket" style="padding-bottom: 120px; padding-top: 30px;">
+    <div *ngIf="this.foodsBasket.length == 0" style="display: flex; align-items: center; justify-content: center; height: 50vh;">
+      <h2 style="color: white;">ไม่มีสินค้าในตะกร้า</h2>
+    </div>
+    <div *ngFor="let food of this.foodsBasket, let i = index" class="cardBasket col" style="padding: 5px;">
+      <div class="card basketList">
+        <div class="ratio ratio-4x3 rounded pic" style="background-image: url({{food.image}}); background-size: cover; background-position: center;">
+        </div>
+        <div class="card-body p-4" style="height: 150px;">
+          <h5 class="card-title">{{food.name}}</h5>
+          <p class="card-text">X {{food.amount}} รายการ</p>
+          <p class="card-text">{{food.price * food.amount}} บาท.</p>
+        </div>
+        <div class="fxCenter rowButton"style="display: flex; width: 200px;">
+          <div class="row" style="padding: 10px;">
+            <div class="col-6 fxCenter" style="padding: 10px;">
+              <button (click)="delAmount(i)" type="button" class="btn btn-light w-100 h-100 themeButton"><span class="fxCenter">
+                <span style="color: white; font-size: 17px;">ลด</span>
+              </span></button>
+            </div>
+            <div class="col-6 fxCenter" style="padding: 10px;">
+              <button (click)="addAmount(i)" type="button" class="btn btn-light w-100 h-100 themeButton"><span class="fxCenter">
+                <span style="color: white; font-size: 17px;">เพิ่ม</span>
+              </span></button>
+            </div>
+            <div class="col fxCenter" style="padding: 10px;">
+              <button (click)="delBasket(i)" type="button" class="btn btn-light w-100 h-100 themeButton" data-bs-toggle="modal" data-bs-target="#delBasket"><span class="fxCenter"><mat-icon>delete_forever</mat-icon>
+              <span style="color: white; font-size: 17px; margin-left: 10px;">ลบเมนู</span>
+              </span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="this.foodsBasket.length > 0" class="container-fluid fixed-bottom themeColor" style="display: flex; justify-content: space-between; height: 90px; padding: 0 20px;">
+  <div class="fxCenter" style="color: white; font-size: 17px;">
+    <h4>รายการทั้งหมด {{foodsBasket.length}} รายการ รวม {{this.total}} บาท.</h4>
+  </div>
+  <div style="display: flex; align-items: center; margin-right: 10px;">
+    <button class="btn btn-light btn-lg themeButton" routerLink="/basket" data-bs-toggle="modal" data-bs-target="#paymentModal">
+      <span style="display: flex; align-items: center;">
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span class="basket toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+          สั่งซื้อ</span>
+      </span>
+    </button>
+  </div>
+</div>
+
+<!-- Modal Delete-->
+<div class="modal fade" id="delBasket" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header fxCenter">
+        <h4 class="modal-title">ลบ {{foodName}} ออกจากตะกร้า?</h4>
+      </div>
+      <div class="modal-footer fxCenter">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal">ยกเลิก</button>
+        <button (click)="delConfirm()" type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">ลบเมนู</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Payment -->
+<div class="modal fade" id="paymentModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">สั่งซื้อ</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>cancel</mat-icon></span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="foodUsername" placeholder="ชื่อ (Name)" [(ngModel)]="data.userData.name">
+          <label for="foodUsername">ชื่อ (Name)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="number" class="form-control" id="phone" placeholder="เบอร์โทร (Phone)" [(ngModel)]="data.userData.phone">
+          <label for="phone">เบอร์โทร (Phone)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="address" placeholder="ที่อยู่ (Address)" [(ngModel)]="data.userData.address">
+          <label for="address">ที่อยู่ (Address)</label>
+        </div>
+        <div style="display: flex;justify-content: space-between; align-items: center;">
+          <label style="color: red;">{{this.data.alert}}</label>
+          <div *ngIf="this.foodsBasket.length > 0">
+            <span style="font-size: 18px; font-weight: 900;">{{foodsBasket.length}} รายการ รวม {{this.total}} บาท.</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <!-- <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" title="Back" data-bs-target="#loginModal">ย้อนกลับ</button> -->
+        <button class="btn btn-light btn-lg themeButton" (click)="confirmOrder()">ยืนยันการสั่งซื้อ</button>
+      </div>
+    </div>
+  </div>
+</div>

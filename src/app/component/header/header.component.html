@@ -1,0 +1,341 @@
+<div class="containner fixed-top themeColor"
+style="display: flex; justify-content: space-between; height: 70px;"
+>
+  <div class="text_name_site" style="display: flex; align-items: center; margin-left: 20px;">
+    <a routerLink="/" style="display: flex; align-items: center; text-decoration: none;">
+      <mat-icon class="icon_site" style="color: white; width: 45px; height: 45px; font-size: 45px; margin-top: -5px;">fastfood</mat-icon>
+      <span class="name-site" style="color: white; font-size: 40px; font-family: Prompt; font-weight: 600; margin-left: 10px; margin-top: 5px;">JT FOODS</span>
+    </a>
+  </div>
+  <div style="display: flex; align-items: center; margin-right: 30px;">
+    <div *ngIf="this.data.isLogin || this.data.isLoginAdmin">
+      <button class="btn btn-light btn-lg me-2 themeButton"data-bs-toggle="modal" data-bs-target="#userInfoModal">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>person</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            ข้อมูลผู้ใช้</span>
+        </span>
+      </button>
+    </div>
+    <div *ngIf="this.data.isLoginAdmin">
+      <button class="btn btn-light btn-lg me-2 themeButton" routerLink="/order" (click)="data.getAllOrder(0)">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>event_note</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            คำสั่งซื้อ</span>
+        </span>
+      </button>
+      <button class="btn btn-light btn-lg me-2 themeButton" routerLink="/history" (click)="data.getAllOrder(1)">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>event_available</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            ประวัติคำสั่งซื้อ</span>
+        </span>
+      </button>
+      <button class="btn btn-light btn-lg me-2 themeButton" data-bs-toggle="modal" data-bs-target="#addFoodModal" (click)="setDefaultType()">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>add_circle_outline</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            เพิ่มเมนูอาหาร</span>
+        </span>
+      </button>
+    </div>
+    <div *ngIf="!this.data.isLogin && !this.data.isLoginAdmin">
+      <button class="btn btn-light btn-lg me-2 themeButton" data-bs-toggle="modal" data-bs-target="#loginModal" (click)="data.clearAlert()">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>lock</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            เข้าสู่ระบบ</span>
+        </span>
+      </button>
+    </div>
+    <div *ngIf="this.data.isLogin">
+      <button class="btn btn-light btn-lg me-2 themeButton" data-bs-toggle="modal" data-bs-target="#orderStatusModal" (click)="showOrderCustomer()">
+        <span style="display: flex; align-items: center;">
+          <mat-icon>local_shipping</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            สถานะการจัดส่ง</span>
+        </span>
+      </button>
+      <button class="btn btn-light btn-lg themeButton" routerLink="/basket">
+        <span style="display: flex; align-items: center;">
+          <mat-icon matBadge="{{this.data.orderAmount}}" matBadgeColor="warn">shopping_cart</mat-icon>
+          <span class="toolbarBut" style="color: white; font-size: 17px; margin-left: 10px;">
+            ตะกร้าสินค้า</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template [ngIf]="!this.data.isLogin && !this.data.isLoginAdmin">
+<!-- Modal Login -->
+<div class="modal fade" id="loginModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">เข้าสู่ระบบ</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginBackEndModal" title="Back-End" (click)="data.clearAlert()">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>store</mat-icon>
+            <span class="toolbarBut" style="font-size: 17px; margin-left: 10px;">
+              Back-End</span>
+          </span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="loginUsername" placeholder="ชื่อผู้ใช้ (Username)" [(ngModel)]="data.username">
+          <label for="loginUsername">ชื่อผู้ใช้ (Username)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="loginPassword" placeholder="รหัสผ่าน (Password)" [(ngModel)]="data.password" (keydown.enter)="login()">
+          <label for="loginPassword">รหัสผ่าน (Password)</label>
+        </div>
+        <div class="form-check ms-1" style="display: flex; justify-content: space-between; padding-right: 30px;">
+          <div>
+            <input class="form-check-input" type="checkbox"  id="CheckShowPass" (click)="showPass()">
+            <label class="form-check-label" for="CheckShowPass">แสดงรหัสผ่าน
+            </label>
+          </div>
+          <div>
+            <label style="color: red;">{{this.data.alert}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" title="Back">ย้อนกลับ</button>
+        <button id="loginButton" type="button" class="btn btn-light btn-lg themeButton"  (click)="login()">เข้าสู่ระบบ</button>
+        <button class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal" (click)="data.clearAlert()">ลงทะเบียน</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Register -->
+<div class="modal fade" id="registerModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">ลงทะเบียน</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>cancel</mat-icon></span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="regdata.username" placeholder="ชื่อผู้ใช้ (Username)" [(ngModel)]="data.username">
+          <label for="regdata.username">ชื่อผู้ใช้ (Username)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="regPass1" placeholder="รหัสผ่าน (Password)" [(ngModel)]="data.password">
+          <label for="regPass1">รหัสผ่าน (Password)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="regPass2" placeholder="ยืนยันรหัสผ่าน (Confirm-Password)" [(ngModel)]="data.re_password" (ngModelChange)="checkPass()">
+          <label for="regPass2">ยืนยันรหัสผ่าน (Confirm-Password)</label>
+        </div>
+        <div class="ms-1">
+          <label style="color: red;">{{this.data.alert}}</label>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" title="Back" data-bs-target="#loginModal" (click)="data.clearAlert()">ย้อนกลับ</button>
+        <button class="btn btn-light btn-lg themeButton" (click)="register()" id="regButton">ลงทะเบียน</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Login Back-End -->
+<div class="modal fade" id="loginBackEndModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">เข้าสู่ระบบ Back-End</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>cancel</mat-icon></span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="loginUsernameBE" placeholder="ชื่อผู้ใช้ (Username)" [(ngModel)]="data.username">
+          <label for="loginUsernameBE">ชื่อผู้ใช้ (Username)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="loginPasswordBE" placeholder="รหัสผ่าน (Password)" [(ngModel)]="data.password" (keydown.enter)="adLogin()">
+          <label for="loginPasswordBE">รหัสผ่าน (Password)</label>
+        </div>
+        <div>
+          <label style="color: red;">{{this.data.alert}}</label>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" title="Back" data-bs-target="#loginModal" (click)="data.clearAlert()">ย้อนกลับ</button>
+        <button type="button" class="btn btn-light btn-lg themeButton" (click)="adLogin()" >เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+</div>
+</ng-template>
+
+<ng-template [ngIf]="this.data.isLogin || this.data.isLoginAdmin">
+  <!-- Modal UserInfo -->
+  <div class="modal fade" id="userInfoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header fxCenter">
+          <h4 class="modal-title">ข้อมูลผู้ใช้</h4>
+        </div>
+        <div class="modal-body text-center">
+          <div *ngIf="this.data.isLogin">
+            <h5>ชื่อผู้ใช้ : {{this.data.userinfo.username}}</h5>
+          </div>
+          <div *ngIf="this.data.isLoginAdmin">
+            <h5>ชื่อผู้ใช้ : {{this.data.userinfo.ad_username}}</h5>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal">ย้อนกลับ</button>
+          <button type="button" class="btn btn-danger btn-lg" (click)="logout()" data-bs-dismiss="modal" >ออกจากระบบ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template [ngIf]="this.data.isLogin">
+  <!-- Modal OrderStatus -->
+  <div class="modal fade" id="orderStatusModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header fxCenter">
+          <h4 class="modal-title">สถานะการจัดส่ง</h4>
+        </div>
+        <div class="modal-body" style="overflow-y: scroll; height:300px;">
+          <div *ngFor="let order of this.order" >
+            <div (click)="data.selectOrder(order)" class="orderInfo" style="background-color: rgb(229, 229, 229); border-radius: 10px; padding: 10px 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#orderInfoModal">
+              <div style="display: flex; flex-direction: column;">
+                <span>รหัสคำสั่งซื้อ : JTOID{{order.oid}}</span>
+                <span>วันที่สั่ง : {{order.odate}}</span>
+              </div>
+              <div *ngIf="order.status == 1">
+                <div style="background-color: rgb(91, 225, 95); border-radius: 10px; padding: 0 10px;">
+                  <span style="color: rgb(101, 101, 101);">จัดส่งแล้ว</span>
+                </div>
+              </div>
+              <div *ngIf="order.status == 0">
+                <div style="background-color: rgb(225, 220, 91); border-radius: 10px; padding: 0 10px;">
+                  <span style="color: rgb(101, 101, 101);">ยังไม่ส่ง</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-around;">
+          <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal">ปิด</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Order info -->
+<div class="modal fade" id="orderInfoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">รายละเอียดคำสั่งซื้อ</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>cancel</mat-icon></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="this.data.selectedOrder != null" >
+          <div style="background-color: rgb(229, 229, 229); border-radius: 10px; padding: 10px 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; flex-direction: column;">
+              <span class="mb-1">ชื่อลูกค้า : {{this.data.selectedOrder.name}}</span>
+              <span class="mb-1">เบอร์โทร : {{this.data.selectedOrder.phone}}</span>
+              <span class="mb-1">ที่อยู่ : {{this.data.selectedOrder.address}}</span>
+              <span class="mb-1">รหัสคำสั่งซื้อ : JTOID{{this.data.selectedOrder.oid}}</span>
+              <span class="mb-1">วันที่สั่ง : {{this.data.selectedOrder.odate}}</span>
+              <div *ngIf="this.data.selectedOrder.fdate != null ;else no_fdate">
+                <span class="mb-1">วันที่จัดส่ง: {{this.data.selectedOrder.fdate}}</span>
+              </div>
+              <ng-template #no_fdate>
+                <span class="mb-1">วันที่จัดส่ง: ยังไม่ส่ง</span>
+              </ng-template>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span style="font-size: 18px; font-weight: 600;">รายการสั่งซื้อ</span>
+          </div>
+          <div style="background-color: rgb(229, 229, 229); border-radius: 10px; padding: 10px 10px; margin-bottom: 10px;  overflow-y: scroll; height:200px;">
+            <div *ngFor="let food of this.data.allFoods">
+              <div class="mb-3" style="border-bottom: 1px solid gray;display: flex;justify-content: space-between; align-items: center;">
+                <span>{{food.name}} X{{food.amount}}</span>
+                <span>{{food.price}} บาท.</span>
+              </div>
+            </div>
+          </div>
+          <div  *ngIf="this.data.totalPrice != null" style="display: flex;justify-content: end; align-items: center;">
+            <span style="font-size: 20px; font-weight: 900;">รวม {{this.data.totalPrice.total}} บาท.</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#orderStatusModal">ย้อนกลับ</button>
+      </div>
+    </div>
+  </div>
+</div>
+</ng-template>
+
+  <!-- Modal Add Food -->
+  <div class="modal fade" id="addFoodModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="modal-title">เพิ่มข้อมูลอาหาร</h3>
+          <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+            <span style="display: flex; align-items: center;">
+              <mat-icon>cancel</mat-icon></span>
+          </button>
+        </div>
+        <div class="modal-body p-4">
+              <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="foodName" placeholder="ชื่อเมนู (FoodName)" [(ngModel)]="this.foodAdd.name">
+              <label for="foodName">ชื่อเมนู (FoodName)</label>
+            </div>
+            <div  class="mb-3" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="price" placeholder="ราคา (Price)" [(ngModel)]="this.foodAdd.price">
+                <label for="price">ราคา (Price)</label>
+              </div>
+              <div class="dropdown me-2">
+                <button class="btn btn-light dropdown-toggle" style="border: 1px solid rgb(192, 192, 192); height: 58px;" type="button" data-bs-toggle="dropdown" >
+                  {{this.addFoodTypeName}}
+                </button>
+                <div class="dropdown-menu" style="overflow-y: scroll; height:200px;">
+                  <div *ngFor="let type of this.data.types">
+                    <button class="dropdown-item" style="height: 50px;" (click)="setAddFoodType(type)">{{type.name}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="m-2" for="image">รูปภาพ (Image)</label>
+              <textarea rows="4" type="text" class="form-control" id="image" placeholder="รูปภาพ (URL)" style="max-height: 200px; min-height: 100px;" [(ngModel)]="this.foodAdd.image"></textarea>
+            </div>
+            <div class="ms-1">
+              <label style="color: red;">{{this.data.alert}}</label>
+            </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-around;">
+          <button class="btn btn-light btn-lg themeButton" (click)="confirmAddFood()">เพิ่มเมนูอาหาร</button>
+        </div>
+      </div>
+    </div>
+  </div>

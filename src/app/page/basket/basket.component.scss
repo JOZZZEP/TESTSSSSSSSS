@@ -1,0 +1,93 @@
+.toolbarBut {
+  display: none;
+}
+
+.basketList{
+  display: flex;
+  flex-direction: row;
+}
+
+.rowBasket{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.cardBasket{
+  width: 100%;
+}
+
+.pic{
+  width: 200px;
+}
+
+@media screen and (min-width: 992px) {
+  .toolbarBut {
+    display: inline-block;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .basketList {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .rowBasket{
+    flex-direction: row;
+  }
+
+  .cardBasket{
+    // display: flex;
+    // justify-content: center;
+    max-width: 33.33%;
+  }
+
+  .pic{
+    width: 100%;
+    height: 200px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  .cardBasket{
+    // display: flex;
+    // justify-content: center;
+    max-width: 50%;
+  }
+
+
+}
+
+@media screen and (max-width: 576px) {
+
+  .basketList {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .cardBasket{
+    // display: flex;
+    // justify-content: center;
+    min-width: 100%;
+  }
+  .pic{
+    // width: 100%;
+    // height: 300px;
+    display: none;
+  }
+
+  .rowButton{
+    max-width: 150px;
+  }
+
+}
+
+
+@media screen and (min-width: 992px) {
+  .pic{
+    width: 200px;
+  }
+}

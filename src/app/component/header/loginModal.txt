@@ -1,0 +1,37 @@
+<!-- Modal Login -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title">เข้าสู่ระบบ</h3>
+        <button class="btn btn-light btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginBackEndModal" title="Back-End">
+          <span style="display: flex; align-items: center;">
+            <mat-icon>store</mat-icon>
+            <span class="basket" style="font-size: 17px; margin-left: 10px;">
+              Back-End</span>
+          </span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="loginUsername" placeholder="ชื่อผู้ใช้ (Username)" [(ngModel)]="data.username">
+          <label for="loginUsername">ชื่อผู้ใช้ (Username)</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="loginPassword" placeholder="รหัสผ่าน (Password)" [(ngModel)]="data.password">
+          <label for="loginPassword">รหัสผ่าน (Password)</label>
+        </div>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="checkbox"  id="CheckShowPass" (click)="showPass()">
+          <label class="form-check-label" for="CheckShowPass">แสดงรหัสผ่าน
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-around;">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" title="Back">ย้อนกลับ</button>
+        <button id="loginButton" type="button" class="btn btn-light btn-lg themeButton"  (click)="login()">เข้าสู่ระบบ</button>
+        <button class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">ลงทะเบียน</button>
+      </div>
+    </div>
+  </div>
+</div>

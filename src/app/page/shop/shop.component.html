@@ -1,0 +1,203 @@
+<div class="container" style="padding-top: 100px;">
+  <div class="ps-2 pe-3" style="display: flex; justify-content: space-between;">
+      <div class="dropdown">
+        <button class="btn btn-light btn-lg dropdown-toggle themeButton" type="button" data-bs-toggle="dropdown" >
+          {{this.typename}}
+        </button>
+        <div class="dropdown-menu" style="overflow-y: scroll; height:250px;">
+          <button class="dropdown-item" style="height: 50px;" (click)="getFoodType(0)">อาหารทั้งหมด</button>
+          <div *ngFor="let type of this.data.types">
+            <button class="dropdown-item" style="height: 50px;" (click)="getFoodType(type.tid)">{{type.name}}</button>
+          </div>
+        </div>
+      </div>
+      <div class="themeColor titlePage" style="border-radius: 40px; padding: 0 20px;">
+        <span style="color: white; font-size: 30px;">รายการอาหาร</span>
+      </div>
+  </div>
+</div>
+<div class="container" style="padding-top: 10px;">
+  <div class="row" style="display: flex; flex-wrap: wrap;">
+    <div *ngFor="let food of this.foods" class="col-lg-4 col-md-6" style="padding: 20px;">
+      <div class="card">
+          <div class="ratio ratio-4x3 rounded" style="background-image: url({{food.image}}); background-size: cover; background-position: center;">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{food.name}}</h5>
+            <p class="card-text">{{food.price}} บาท.</p>
+            <div *ngIf="this.data.isLogin">
+              <button (click)="modalSelectFood(food)" type="button" class="btn btn-light btn-lg themeButton" data-bs-toggle="modal" data-bs-target="#addToBasket"><span style="display: flex; align-items: center;"><mat-icon>add_shopping_cart</mat-icon>
+                <span class="basket" style="color: white; font-size: 17px; margin-left: 10px;">
+                  เพิ่มลงตะกร้า</span>
+              </span></button>
+            </div>
+            <div *ngIf="!this.data.isLogin && !this.data.isLoginAdmin">
+              <button type="button" class="btn btn-light btn-lg themeButton" data-bs-toggle="modal" data-bs-target="#loginModal"><span style="display: flex; align-items: center;"><mat-icon>add_shopping_cart</mat-icon>
+                <span class="basket" style="color: white; font-size: 17px; margin-left: 10px;">
+                  เพิ่มลงตะกร้า</span>
+              </span></button>
+            </div>
+            <div *ngIf="this.data.isLoginAdmin">
+              <button (click)="modalSelectFood(food)" type="button" class="btn btn-light btn-lg themeButton" data-bs-toggle="modal" data-bs-target="#editModal"><span style="display: flex; align-items: center;"><mat-icon>build</mat-icon>
+                <span class="basket" style="color: white; font-size: 17px; margin-left: 10px;">แก้ไข</span>
+              </span></button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template [ngIf]="this.data.isLogin">
+  <!-- Modal Basket -->
+  <div class="modal fade" id="addToBasket" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header fxCenter">
+          <h4 class="modal-title">{{foodName}}</h4>
+        </div>
+        <div class="modal-body text-center">
+          <h5>จำนวน</h5>
+          <div class="btn-group">
+            <button (click)="delAmount()" type="button" class="btn btn-dark btn-lg">-</button>
+            <button type="button" class="btn btn-dark btn-lg">{{amount}}</button>
+            <button (click)="addAmount()" type="button" class="btn btn-dark btn-lg">+</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal">ยกเลิก</button>
+          <button (click)="addToBasket()" type="button" class="btn btn-light btn-lg themeButton" data-bs-dismiss="modal" style="color: white;">เพิ่มลงในตะกร้า</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template [ngIf]="this.data.isLoginAdmin">
+  <!-- Modal Edit Food Info -->
+  <div class="modal fade" id="editModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="modal-title">แก้ไขข้อมูลอาหาร</h3>
+          <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+            <span style="display: flex; align-items: center;">
+              <mat-icon>cancel</mat-icon></span>
+          </button>
+        </div>
+        <div class="modal-body p-4">
+          <ng-template [ngIf]="this.typeEdit != null">
+              <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="foodName" placeholder="ชื่อเมนู (FoodName)" [(ngModel)]="this.foodEdit.name">
+              <label for="foodName">ชื่อเมนู (FoodName)</label>
+            </div>
+            <div  class="mb-3" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="price" placeholder="ราคา (Price)" [(ngModel)]="this.foodEdit.price">
+                <label for="price">ราคา (Price)</label>
+              </div>
+              <div class="dropdown me-2">
+                <button class="btn btn-light dropdown-toggle" style="border: 1px solid rgb(192, 192, 192); height: 58px;" type="button" data-bs-toggle="dropdown" >
+                  <ng-template [ngIf]="this.typeEdit != null">
+                    {{this.typeEdit.name}}
+                  </ng-template>
+                </button>
+                <div class="dropdown-menu" style="overflow-y: scroll; height:200px;">
+                  <div *ngFor="let type of this.data.types">
+                    <button class="dropdown-item" style="height: 50px;" (click)="getTypeEdit(type.tid)">{{type.name}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="m-2" for="image">รูปภาพ (Image)</label>
+              <textarea rows="4" type="text" class="form-control" id="image" placeholder="รูปภาพ (Image)" style="max-height: 200px; min-height: 100px;" [(ngModel)]="this.foodEdit.image"></textarea>
+            </div>
+          </ng-template>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-around;">
+          <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#delFoodModal">ลบเมนู</button>
+          <button class="btn btn-light btn-lg themeButton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#confirmEditModal">บันทึก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal Confirm Edit-->
+<div class="modal fade" id="confirmEditModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header fxCenter">
+      <h4 class="modal-title">แก้ไขข้อมูล {{foodName}} ?</h4>
+    </div>
+    <div class="modal-footer fxCenter">
+      <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editModal">ยกเลิก</button>
+      <button  (click)="confirmFoodEdit()" type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">บันทึกการแก้ไข</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Modal Delete Food-->
+<div class="modal fade" id="delFoodModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header fxCenter">
+        <h4 class="modal-title">ลบ {{foodName}} ?</h4>
+      </div>
+      <div class="modal-footer fxCenter">
+        <button type="button" class="btn btn-dark btn-lg" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editModal">ยกเลิก</button>
+        <button (click)="comfirmDelFood()" type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">ลบเมนู</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Modal Add Food -->
+  <div class="modal fade" id="addFoodModal" tabindex="-1" data-bs-keyboard="false" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header ps-4 pe-4" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="modal-title">เพิ่มข้อมูลอาหาร</h3>
+          <button class="btn btn-light btn-lg" data-bs-dismiss="modal">
+            <span style="display: flex; align-items: center;">
+              <mat-icon>cancel</mat-icon></span>
+          </button>
+        </div>
+        <div class="modal-body p-4">
+              <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="foodName" placeholder="ชื่อเมนู (FoodName)">
+              <label for="foodName">ชื่อเมนู (FoodName)</label>
+            </div>
+            <div  class="mb-3" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="price" placeholder="ราคา (Price)">
+                <label for="price">ราคา (Price)</label>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" style="border: 1px solid rgb(157, 157, 157); height: 58px;" type="button" data-bs-toggle="dropdown" >
+                  <div *ngIf="this.typeEdit != null">
+                    {{this.typeEdit.name}}
+                  </div>
+                </button>
+                <div class="dropdown-menu">
+                  <div *ngFor="let type of this.data.types">
+                    <button class="dropdown-item" style="height: 50px;">{{type.name}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="m-2" for="image">รูปภาพ (Image)</label>
+              <textarea rows="4" type="text" class="form-control" id="image" placeholder="รูปภาพ (URL)" style="max-height: 200px; min-height: 100px;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-around;">
+          <!-- <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">ลบเมนู</button> -->
+          <button class="btn btn-light btn-lg themeButton" data-bs-dismiss="modal">เพิ่มเมนูอาหาร</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
